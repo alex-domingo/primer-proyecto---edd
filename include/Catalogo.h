@@ -19,9 +19,8 @@
  *   - ListaSimple      (fase 1)
  *   - ListaOrdenada    (fase 1)
  *   - ArbolAVL         (fase 2)
- *   - TablaHash        (fase 3)
- *   - ArbolB           (fase 4)
- *   - ArbolBPlus       (fase 5)
+ *   - ArbolB           (fase 3)
+ *   - ArbolBPlus       (fase 4)
  */
 
 // Por ahora hacemos forward declarations para no depender
@@ -29,7 +28,6 @@
 class ListaSimple;
 class ListaOrdenada;
 class ArbolAVL;
-class TablaHash;
 class ArbolB;
 class ArbolBPlus;
 
@@ -39,7 +37,6 @@ private:
     ListaSimple *listaSimple;
     ListaOrdenada *listaOrdenada;
     ArbolAVL *arbolAVL;
-    TablaHash *tablaHash;
     ArbolB *arbolB;
     ArbolBPlus *arbolBPlus;
 
