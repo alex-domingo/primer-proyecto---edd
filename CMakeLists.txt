@@ -22,4 +22,9 @@ add_executable(proyecto_edd main.cpp ${SOURCES}
         include/ListaOrdenada.h
         src/NodoLista.cpp
         src/ListaSimple.cpp
-        src/ListaOrdenada.cpp)
+        src/ListaOrdenada.cpp
+        include/NodoAVL.h
+        include/ArbolAVL.h
+        src/NodoAVL.cpp
+        src/ArbolAVL.cpp
+)

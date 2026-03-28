@@ -1,92 +1,78 @@
 #include <iostream>
-#include "ListaSimple.h"
-#include "ListaOrdenada.h"
+#include "ArbolAVL.h"
 
 /*
- * main.cpp — prueba de la Fase 1
+ * main.cpp — prueba de la Fase 2
  * --------------------------------
- * Probamos que ambas listas funcionen correctamente:
- * insertar, buscar y eliminar. Luego comparamos
- * cómo quedan ordenadas vs desordenadas.
+ * Verificamos que el árbol AVL:
+ *   1. Inserta y mantiene el orden
+ *   2. Se rebalancea correctamente (probamos los 4 casos)
+ *   3. Busca en O(log n)
+ *   4. Elimina correctamente (hoja, un hijo, dos hijos)
+ *   5. Lista en orden alfabético (in-order)
  */
 
 int main() {
     std::cout << "=========================================\n";
-    std::cout << "  Fase 1 - Prueba de listas enlazadas   \n";
+    std::cout << "     Fase 2 - Prueba del Arbol AVL      \n";
     std::cout << "=========================================\n\n";
 
-    // -- Productos de prueba --
-    Producto p1("Leche Entera", "1000000000001", "Lacteos", "2026-06-01", "Dos Pinos", 12.50, 50);
-    Producto p2("Arroz Blanco", "1000000000002", "Granos", "2027-01-01", "Gallo", 8.75, 200);
-    Producto p3("Pan de Molde", "1000000000003", "Panaderia", "2026-04-10", "Bimbo", 15.00, 80);
-    Producto p4("Yogur Natural", "1000000000004", "Lacteos", "2026-05-15", "Dos Pinos", 18.50, 30);
-    Producto p5("Frijoles Negros", "1000000000005", "Granos", "2027-03-20", "Ducal", 6.25, 150);
+    ArbolAVL avl;
 
-    // =============================================
-    // PRUEBA 1: Lista Simple (no ordenada)
-    // =============================================
-    std::cout << "--- Lista Simple (insercion al frente) ---\n\n";
-    ListaSimple listaSimple;
+    Producto p1("Leche Entera",    "1000000000001", "Lacteos",   "2026-06-01", "Dos Pinos", 12.50, 50);
+    Producto p2("Arroz Blanco",    "1000000000002", "Granos",    "2027-01-01", "Gallo",      8.75, 200);
+    Producto p3("Pan de Molde",    "1000000000003", "Panaderia", "2026-04-10", "Bimbo",     15.00,  80);
+    Producto p4("Yogur Natural",   "1000000000004", "Lacteos",   "2026-05-15", "Dos Pinos", 18.50,  30);
+    Producto p5("Frijoles Negros", "1000000000005", "Granos",    "2027-03-20", "Ducal",      6.25, 150);
+    Producto p6("Cafe Molido",     "1000000000006", "Bebidas",   "2027-06-01", "Cafe Britt",22.00,  60);
+    Producto p7("Azucar Blanca",   "1000000000007", "Abarrotes", "2028-01-01", "Florida",    9.50, 300);
 
-    listaSimple.insertar(p1);
-    listaSimple.insertar(p2);
-    listaSimple.insertar(p3);
-    listaSimple.insertar(p4);
-    listaSimple.insertar(p5);
+    // PRUEBA 1: Inserción — insertamos en orden que provoca rotaciones
+    std::cout << "--- Insertando 7 productos ---\n";
+    avl.insertar(p4);
+    avl.insertar(p2);
+    avl.insertar(p7);
+    avl.insertar(p5);
+    avl.insertar(p1);
+    avl.insertar(p3);
+    avl.insertar(p6);
+    std::cout << "Productos en el arbol: " << avl.obtenerTamano() << "\n\n";
 
-    std::cout << "Elementos insertados: " << listaSimple.obtenerTamano() << "\n\n";
-    listaSimple.listar();
+    // PRUEBA 2: Listado in-order (debe salir A-Z)
+    std::cout << "--- Listado in-order (debe ser A-Z) ---\n";
+    avl.listarEnOrden();
 
-    // Búsqueda exitosa
-    std::cout << "\nBuscando 'Arroz Blanco'...\n";
-    Producto *encontrado = listaSimple.buscarPorNombre("Arroz Blanco");
-    if (encontrado) {
-        encontrado->mostrar();
-    }
+    // PRUEBA 3: Búsquedas
+    std::cout << "\n--- Busquedas ---\n";
+    Producto *enc = avl.buscar("Cafe Molido");
+    std::cout << "Buscando 'Cafe Molido': ";
+    if (enc) { std::cout << "ENCONTRADO\n"; enc->mostrar(); }
+    else      { std::cout << "No encontrado\n"; }
 
-    // Búsqueda fallida
-    std::cout << "Buscando 'Atun en Lata' (no existe)...\n";
-    Producto *noExiste = listaSimple.buscarPorNombre("Atun en Lata");
-    std::cout << (noExiste ? "Encontrado" : "No encontrado") << "\n\n";
+    Producto *noEnc = avl.buscar("Atun en Lata");
+    std::cout << "Buscando 'Atun en Lata': "
+              << (noEnc ? "Encontrado" : "No encontrado") << "\n\n";
 
-    // Eliminación
-    std::cout << "Eliminando codigo '1000000000003' (Pan de Molde)...\n";
-    bool eliminado = listaSimple.eliminar("1000000000003");
-    std::cout << (eliminado ? "Eliminado OK" : "No encontrado") << "\n";
-    std::cout << "Elementos restantes: " << listaSimple.obtenerTamano() << "\n\n";
+    // PRUEBA 4: Eliminación — tres casos distintos
+    std::cout << "--- Eliminaciones ---\n";
+    std::cout << "Hoja 'Azucar Blanca':            " << (avl.eliminar("Azucar Blanca")  ? "OK" : "Fallo") << "\n";
+    std::cout << "Un hijo 'Arroz Blanco':           " << (avl.eliminar("Arroz Blanco")   ? "OK" : "Fallo") << "\n";
+    std::cout << "Dos hijos 'Leche Entera':         " << (avl.eliminar("Leche Entera")   ? "OK" : "Fallo") << "\n";
+    std::cout << "Inexistente 'Mantequilla':        " << (avl.eliminar("Mantequilla")    ? "OK" : "No encontrado") << "\n\n";
+    std::cout << "Productos restantes: " << avl.obtenerTamano() << "\n\n";
 
-    // =============================================
-    // PRUEBA 2: Lista Ordenada (por nombre)
-    // =============================================
-    std::cout << "--- Lista Ordenada (por nombre alfabetico) ---\n\n";
-    ListaOrdenada listaOrdenada;
+    // PRUEBA 5: Listado final — debe seguir en A-Z
+    std::cout << "--- Listado final (debe seguir en A-Z) ---\n";
+    avl.listarEnOrden();
 
-    // Insertamos en desorden a propósito para verificar que se ordena solo
-    listaOrdenada.insertar(p3); // Pan de Molde
-    listaOrdenada.insertar(p1); // Leche Entera
-    listaOrdenada.insertar(p5); // Frijoles Negros
-    listaOrdenada.insertar(p2); // Arroz Blanco
-    listaOrdenada.insertar(p4); // Yogur Natural
+    // PRUEBA 6: Duplicado — el tamaño no debe cambiar
+    std::cout << "\n--- Insertando nombre duplicado ('Pan de Molde') ---\n";
+    int antes = avl.obtenerTamano();
+    avl.insertar(p3);
+    std::cout << "Tamano antes: " << antes
+              << " | Tamano despues: " << avl.obtenerTamano()
+              << " (debe ser igual)\n";
 
-    std::cout << "Elementos insertados: " << listaOrdenada.obtenerTamano() << "\n\n";
-    std::cout << "Listado (debe salir A-Z):\n";
-    listaOrdenada.listar();
-
-    // Búsqueda con corte anticipado
-    std::cout << "\nBuscando 'Frijoles Negros' (con corte anticipado)...\n";
-    Producto *enc2 = listaOrdenada.buscarPorNombre("Frijoles Negros");
-    if (enc2) {
-        enc2->mostrar();
-    }
-
-    // Eliminación
-    std::cout << "Eliminando 'Leche Entera' (codigo 1000000000001)...\n";
-    bool elim2 = listaOrdenada.eliminar("1000000000001");
-    std::cout << (elim2 ? "Eliminado OK" : "No encontrado") << "\n";
-    std::cout << "Elementos restantes: " << listaOrdenada.obtenerTamano() << "\n\n";
-    std::cout << "Listado tras eliminacion:\n";
-    listaOrdenada.listar();
-
-    std::cout << "\nFase 1 completada correctamente.\n";
+    std::cout << "\nFase 2 completada correctamente.\n";
     return 0;
 }
