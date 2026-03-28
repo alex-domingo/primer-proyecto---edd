@@ -18,7 +18,6 @@ Catalogo::Catalogo() {
     listaSimple = nullptr;
     listaOrdenada = nullptr;
     arbolAVL = nullptr;
-    tablaHash = nullptr;
     arbolB = nullptr;
     arbolBPlus = nullptr;
 
@@ -39,7 +38,7 @@ Catalogo::~Catalogo() {
 }
 
 // Agrega el producto en todas las estructuras
-// Todavía no implementado — se completa en fase 6
+// Todavía no implementado — se completa en fase 5
 bool Catalogo::agregarProducto(const Producto &producto) {
     // TODO: implementar inserción atómica con rollback (fase 6)
     std::cout << "[TODO] agregarProducto: " << producto.nombre << "\n";
