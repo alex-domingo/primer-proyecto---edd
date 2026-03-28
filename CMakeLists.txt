@@ -16,4 +16,10 @@ add_executable(proyecto_edd main.cpp ${SOURCES}
         include/Producto.h
         src/Producto.cpp
         include/Catalogo.h
-        src/Catalogo.cpp)
+        src/Catalogo.cpp
+        include/NodoLista.h
+        include/ListaSimple.h
+        include/ListaOrdenada.h
+        src/NodoLista.cpp
+        src/ListaSimple.cpp
+        src/ListaOrdenada.cpp)
