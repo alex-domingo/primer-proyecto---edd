@@ -2,79 +2,74 @@
 #define PROYECTO_EDD_CATALOGO_H
 
 #include "Producto.h"
+#include "ListaSimple.h"
+#include "ListaOrdenada.h"
+#include "ArbolAVL.h"
+#include "ArbolB.h"
+#include "ArbolBPlus.h"
 
 /*
- * catalogo.h
- * ----------
- * El Catálogo es el "jefe" del sistema. Él tiene una instancia de
- * cada estructura de datos y se encarga de mantenerlas sincronizadas.
+ * Catalogo.h
+ * -----------
+ * El Catálogo es el orquestador central del sistema.
+ * Coordina las 5 estructuras de datos simultáneamente
+ * y garantiza que siempre estén sincronizadas.
  *
- * Cuando alguien quiere agregar, buscar o eliminar un producto,
- * siempre habla con el Catálogo — nunca con las estructuras directo.
+ * La operación más delicada es agregarProducto():
+ * usa inserción atómica — si falla en cualquier estructura,
+ * hace rollback en todas las que ya insertaron.
  *
- * Por ahora solo es el esqueleto; iremos llenando los métodos
- * conforme avancemos en las fases del proyecto.
- *
- * Estructuras que va a coordinar:
- *   - ListaSimple      (fase 1)
- *   - ListaOrdenada    (fase 1)
- *   - ArbolAVL         (fase 2)
- *   - ArbolB           (fase 3)
- *   - ArbolBPlus       (fase 4)
+ * Estructuras coordinadas:
+ *   listaSimple   — búsqueda secuencial (referencia para benchmarks)
+ *   listaOrdenada — búsqueda secuencial ordenada (referencia)
+ *   arbolAVL      — búsqueda por nombre O(log n)
+ *   arbolB        — búsqueda por rango de fecha O(log n + k)
+ *   arbolBPlus    — búsqueda por categoría O(log n + k)
  */
-
-// Por ahora hacemos forward declarations para no depender
-// de headers que todavía no existen. Los iremos agregando fase a fase.
-class ListaSimple;
-class ListaOrdenada;
-class ArbolAVL;
-class ArbolB;
-class ArbolBPlus;
 
 class Catalogo {
 private:
-    // Punteros a cada estructura — se inicializan en el constructor
     ListaSimple *listaSimple;
     ListaOrdenada *listaOrdenada;
     ArbolAVL *arbolAVL;
     ArbolB *arbolB;
     ArbolBPlus *arbolBPlus;
 
+    int totalProductos; // contador central
+
+    // Verifica si ya existe un producto con ese código de barra
+    bool existeCodigo(const std::string &codigoBarra) const;
+
 public:
-    // Constructor y destructor
     Catalogo();
 
     ~Catalogo();
 
-    // -- Operaciones principales --
-
-    // Agrega un producto en TODAS las estructuras (con rollback si falla)
+    // Agrega en TODAS las estructuras — rollback si falla alguna
     bool agregarProducto(const Producto &producto);
 
-    // Elimina un producto de TODAS las estructuras
-    bool eliminarProducto(const std::string &codigoBarra);
+    // Elimina de TODAS las estructuras
+    bool eliminarProducto(const std::string &nombre,
+                          const std::string &codigoBarra,
+                          const std::string &categoria,
+                          const std::string &fechaCaducidad);
 
-    // -- Búsquedas (cada una usa la estructura más adecuada) --
-
-    // Busca por nombre usando el AVL
+    // -- Búsquedas --
     Producto *buscarPorNombre(const std::string &nombre);
 
-    // Busca por código de barra usando la tabla hash
-    Producto *buscarPorCodigo(const std::string &codigo);
-
-    // Retorna todos los productos de una categoría (árbol B+)
-    // TODO: cambiar void* por el tipo de colección que definamos
     void buscarPorCategoria(const std::string &categoria);
 
-    // Retorna productos cuya fecha caiga en el rango dado (árbol B)
-    void buscarPorRangoFecha(const std::string &fechaInicio,
-                             const std::string &fechaFin);
+    void buscarPorRangoFecha(const std::string &inicio,
+                             const std::string &fin);
 
-    // Lista todos los productos ordenados por nombre (AVL in-order)
-    void listarPorNombre();
+    // -- Listados --
+    void listarPorNombre() const; // AVL in-order
+    void listarSimple() const; // lista simple
+    void listarOrdenado() const; // lista ordenada
 
-    // -- Utilidades --
     int contarProductos() const;
+
+    bool estaVacio() const;
 };
 
 #endif //PROYECTO_EDD_CATALOGO_H
