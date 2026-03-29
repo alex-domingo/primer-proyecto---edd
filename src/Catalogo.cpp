@@ -2,86 +2,175 @@
 #include <iostream>
 
 /*
- * catalogo.cpp
- * ------------
- * Implementación del orquestador central.
- * Por ahora los métodos están vacíos (retornan nullptr o no hacen nada).
- * Los iremos completando fase a fase conforme implementemos
- * cada estructura de datos.
+ * Catalogo.cpp
+ * -------------
+ * Implementación del orquestador central del sistema.
  *
- * Fase actual: 0 — solo esqueleto
+ * La clave de esta clase es la INSERCIÓN ATÓMICA:
+ * insertamos en cada estructura una por una. Si alguna falla
+ * (por ejemplo, código de barra duplicado), revertimos todas
+ * las inserciones previas y reportamos el error.
+ *
+ * El orden de inserción es:
+ *   1. listaSimple
+ *   2. listaOrdenada
+ *   3. arbolAVL
+ *   4. arbolB
+ *   5. arbolBPlus
+ *
+ * Si falla en el paso N, eliminamos de las estructuras 1..N-1.
  */
 
-Catalogo::Catalogo() {
-    // Por ahora inicializamos todo en nullptr
-    // Cuando implementemos cada estructura, la crearemos aquí
-    listaSimple = nullptr;
-    listaOrdenada = nullptr;
-    arbolAVL = nullptr;
-    arbolB = nullptr;
-    arbolBPlus = nullptr;
+Catalogo::Catalogo() : totalProductos(0) {
+    listaSimple = new ListaSimple();
+    listaOrdenada = new ListaOrdenada();
+    arbolAVL = new ArbolAVL();
+    arbolB = new ArbolB();
+    arbolBPlus = new ArbolBPlus();
 
-    std::cout << "[Catalogo] Sistema iniciado correctamente.\n";
+    std::cout << "[Catalogo] Sistema iniciado. Estructuras listas.\n";
 }
 
 Catalogo::~Catalogo() {
-    // Cuando las clases estén implementadas, aquí liberamos su memoria.
-    // Por ahora todos son nullptr así que no hay nada que borrar todavía.
-    // (Los delete se irán descomentando fase a fase)
-
-    // delete listaSimple;
-    // delete listaOrdenada;
-    // delete arbolAVL;
-    // delete tablaHash;
-    // delete arbolB;
-    // delete arbolBPlus;
+    delete listaSimple;
+    delete listaOrdenada;
+    delete arbolAVL;
+    delete arbolB;
+    delete arbolBPlus;
 }
 
-// Agrega el producto en todas las estructuras
-// Todavía no implementado — se completa en fase 5
+// Busca en la lista simple para verificar duplicados de código de barra
+bool Catalogo::existeCodigo(const std::string &codigoBarra) const {
+    return listaSimple->buscarPorCodigo(codigoBarra) != nullptr;
+}
+
+// ============================================================
+// Inserción atómica con rollback
+// ============================================================
+
 bool Catalogo::agregarProducto(const Producto &producto) {
-    // TODO: implementar inserción atómica con rollback (fase 6)
-    std::cout << "[TODO] agregarProducto: " << producto.nombre << "\n";
-    return false;
+    // Validación previa: código de barra duplicado
+    if (existeCodigo(producto.codigoBarra)) {
+        std::cout << "[Catalogo] ERROR: codigo de barra '"
+                << producto.codigoBarra << "' ya existe. Operacion cancelada.\n";
+        return false;
+    }
+
+    // Validaciones básicas de datos
+    if (producto.nombre.empty() || producto.codigoBarra.empty() ||
+        producto.categoria.empty() || producto.fechaCaducidad.empty()) {
+        std::cout << "[Catalogo] ERROR: producto con campos vacios. Operacion cancelada.\n";
+        return false;
+    }
+
+    if (producto.precio < 0 || producto.stock < 0) {
+        std::cout << "[Catalogo] ERROR: precio o stock negativos. Operacion cancelada.\n";
+        return false;
+    }
+
+    // --- Inserción paso a paso con rollback ---
+
+    // Paso 1: Lista simple
+    listaSimple->insertar(producto);
+
+    // Paso 2: Lista ordenada
+    listaOrdenada->insertar(producto);
+
+    // Paso 3: AVL — puede fallar si el nombre ya existe (clave duplicada)
+    int tamAVLAntes = arbolAVL->obtenerTamano();
+    arbolAVL->insertar(producto);
+    if (arbolAVL->obtenerTamano() == tamAVLAntes) {
+        // El AVL rechazó la inserción (nombre duplicado)
+        // Rollback: revertimos lista simple y ordenada
+        listaSimple->eliminar(producto.codigoBarra);
+        listaOrdenada->eliminar(producto.codigoBarra);
+        std::cout << "[Catalogo] ERROR: nombre '" << producto.nombre
+                << "' ya existe en el AVL. Rollback aplicado.\n";
+        return false;
+    }
+
+    // Paso 4: Árbol B (por fecha)
+    arbolB->insertar(producto);
+
+    // Paso 5: Árbol B+ (por categoría)
+    arbolBPlus->insertar(producto);
+
+    totalProductos++;
+    return true;
 }
 
-// Elimina el producto de todas las estructuras
-bool Catalogo::eliminarProducto(const std::string &codigoBarra) {
-    // TODO: implementar eliminación propagada (fase 6)
-    std::cout << "[TODO] eliminarProducto: " << codigoBarra << "\n";
-    return false;
+// ============================================================
+// Eliminación propagada
+// ============================================================
+
+bool Catalogo::eliminarProducto(const std::string &nombre,
+                                const std::string &codigoBarra,
+                                const std::string &categoria,
+                                const std::string &fechaCaducidad) {
+    // Verificamos que exista antes de intentar eliminar
+    if (!existeCodigo(codigoBarra)) {
+        std::cout << "[Catalogo] ERROR: producto no encontrado. Nada que eliminar.\n";
+        return false;
+    }
+
+    // Eliminamos de las 5 estructuras
+    listaSimple->eliminar(codigoBarra);
+    listaOrdenada->eliminar(codigoBarra);
+    arbolAVL->eliminar(nombre);
+    arbolB->eliminar(fechaCaducidad);
+    arbolBPlus->eliminar(categoria, codigoBarra);
+
+    totalProductos--;
+    return true;
 }
+
+// ============================================================
+// Búsquedas
+// ============================================================
 
 Producto *Catalogo::buscarPorNombre(const std::string &nombre) {
-    // TODO: delegar al AVL (fase 6)
-    std::cout << "[TODO] buscarPorNombre: " << nombre << "\n";
-    return nullptr;
-}
-
-Producto *Catalogo::buscarPorCodigo(const std::string &codigo) {
-    // TODO: delegar a la tabla hash (fase 6)
-    std::cout << "[TODO] buscarPorCodigo: " << codigo << "\n";
-    return nullptr;
+    // El AVL es la estructura óptima para esto — O(log n)
+    Producto *resultado = arbolAVL->buscar(nombre);
+    if (!resultado) {
+        std::cout << "[Catalogo] Producto '" << nombre << "' no encontrado.\n";
+    }
+    return resultado;
 }
 
 void Catalogo::buscarPorCategoria(const std::string &categoria) {
-    // TODO: delegar al árbol B+ (fase 6)
-    std::cout << "[TODO] buscarPorCategoria: " << categoria << "\n";
+    // El árbol B+ recorre las hojas enlazadas — O(log n + k)
+    arbolBPlus->buscarPorCategoria(categoria);
 }
 
-void Catalogo::buscarPorRangoFecha(const std::string &fechaInicio,
-                                   const std::string &fechaFin) {
-    // TODO: delegar al árbol B (fase 6)
-    std::cout << "[TODO] buscarPorRangoFecha: "
-            << fechaInicio << " - " << fechaFin << "\n";
+void Catalogo::buscarPorRangoFecha(const std::string &inicio,
+                                   const std::string &fin) {
+    // El árbol B soporta rangos de forma nativa — O(log n + k)
+    arbolB->buscarRango(inicio, fin);
 }
 
-void Catalogo::listarPorNombre() {
-    // TODO: recorrido in-order del AVL (fase 6)
-    std::cout << "[TODO] listarPorNombre\n";
+// ============================================================
+// Listados
+// ============================================================
+
+void Catalogo::listarPorNombre() const {
+    std::cout << "=== Listado por nombre (AVL in-order) ===\n";
+    arbolAVL->listarEnOrden();
+}
+
+void Catalogo::listarSimple() const {
+    std::cout << "=== Listado lista simple (orden de insercion) ===\n";
+    listaSimple->listar();
+}
+
+void Catalogo::listarOrdenado() const {
+    std::cout << "=== Listado lista ordenada (alfabetico) ===\n";
+    listaOrdenada->listar();
 }
 
 int Catalogo::contarProductos() const {
-    // TODO: llevar un contador interno (fase 6)
-    return 0;
+    return totalProductos;
+}
+
+bool Catalogo::estaVacio() const {
+    return totalProductos == 0;
 }
