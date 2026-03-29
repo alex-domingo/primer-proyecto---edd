@@ -1,7 +1,7 @@
 #ifndef PROYECTO_EDD_CATALOGO_H
 #define PROYECTO_EDD_CATALOGO_H
 
-#include "producto.h"
+#include "Producto.h"
 
 /*
  * catalogo.h
