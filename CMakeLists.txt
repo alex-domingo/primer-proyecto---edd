@@ -31,4 +31,8 @@ add_executable(proyecto_edd main.cpp ${SOURCES}
         include/ArbolB.h
         src/NodoB.cpp
         src/ArbolB.cpp
+        include/NodoBPlus.h
+        include/ArbolBPlus.h
+        src/NodoBPlus.cpp
+        src/ArbolBPlus.cpp
 )
