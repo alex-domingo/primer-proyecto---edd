@@ -1,0 +1,6 @@
+[Linea 3] Linea malformada (campos incorrectos) | Contenido: "Pan de Molde","2222222222222","Panaderia"
+[Linea 4] Precio no es un numero valido: GRATIS | Contenido: "Arroz Blanco","3333333333333","Granos","2027-01-01","Gallo","GRATIS","100"
+[Linea 5] Stock no es un entero valido: MUCHO | Contenido: "Yogur Natural","4444444444444","Lacteos","2026-05-15","Dos Pinos","18.50","MUCHO"
+[Linea 6] Rechazado por el catalogo (posible duplicado) | Contenido: "Leche Semidescremada","1111111111111","Lacteos","2026-07-01","Dos Pinos","11.00","40"
+[Linea 7] Campo obligatorio vacio | Contenido: "","5555555555555","Bebidas","2027-03-01","Crystal","5.00","200"
+[Linea 8] Precio negativo: -22.00 | Contenido: "Cafe Molido","6666666666666","Bebidas","2027-06-01","Cafe Britt","-22.00","60"

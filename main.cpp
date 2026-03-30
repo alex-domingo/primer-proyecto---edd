@@ -1,109 +1,118 @@
 #include <iostream>
+#include <fstream>
 #include "Catalogo.h"
+#include "CargadorCSV.h"
 
 /*
- * main.cpp — prueba de la Fase 5
+ * main.cpp — prueba de la Fase 6
  * --------------------------------
- * Verificamos que el Catálogo:
- *   1. Inserta en las 5 estructuras simultáneamente
- *   2. Rechaza duplicados de código de barra
- *   3. Hace rollback si el AVL rechaza un nombre duplicado
- *   4. Elimina de todas las estructuras a la vez
- *   5. Cada búsqueda va a la estructura correcta
+ * Verificamos que el CargadorCSV:
+ *   1. Carga el CSV principal (1050 productos)
+ *   2. Maneja un archivo inexistente
+ *   3. Maneja un archivo vacío
+ *   4. Maneja líneas corruptas y duplicados
+ *   5. Los productos cargados son consultables
  */
+
+// Crea archivos de prueba para casos edge
+void crearArchivosEdge() {
+    // Archivo vacío
+    std::ofstream vacio("data/vacio.csv");
+    vacio << "\"Nombre\",\"CodigoBarra\",\"Categoria\","
+            "\"FechaCaducidad\",\"Marca\",\"Precio\",\"Stock\"\n";
+    vacio.close();
+
+    // Archivo con líneas corruptas y duplicados
+    std::ofstream corrupto("data/corrupto.csv");
+    corrupto << "\"Nombre\",\"CodigoBarra\",\"Categoria\","
+            "\"FechaCaducidad\",\"Marca\",\"Precio\",\"Stock\"\n";
+    // Línea válida
+    corrupto << "\"Leche Entera\",\"1111111111111\",\"Lacteos\","
+            "\"2026-06-01\",\"Dos Pinos\",\"12.50\",\"50\"\n";
+    // Campos faltantes (malformada)
+    corrupto << "\"Pan de Molde\",\"2222222222222\",\"Panaderia\"\n";
+    // Precio no numérico
+    corrupto << "\"Arroz Blanco\",\"3333333333333\",\"Granos\","
+            "\"2027-01-01\",\"Gallo\",\"GRATIS\",\"100\"\n";
+    // Stock no entero
+    corrupto << "\"Yogur Natural\",\"4444444444444\",\"Lacteos\","
+            "\"2026-05-15\",\"Dos Pinos\",\"18.50\",\"MUCHO\"\n";
+    // Código de barra duplicado
+    corrupto << "\"Leche Semidescremada\",\"1111111111111\",\"Lacteos\","
+            "\"2026-07-01\",\"Dos Pinos\",\"11.00\",\"40\"\n";
+    // Campo vacío
+    corrupto << "\"\",\"5555555555555\",\"Bebidas\","
+            "\"2027-03-01\",\"Crystal\",\"5.00\",\"200\"\n";
+    // Precio negativo
+    corrupto << "\"Cafe Molido\",\"6666666666666\",\"Bebidas\","
+            "\"2027-06-01\",\"Cafe Britt\",\"-22.00\",\"60\"\n";
+    // Línea válida adicional
+    corrupto << "\"Frijoles Negros\",\"7777777777777\",\"Granos\","
+            "\"2027-03-20\",\"Ducal\",\"6.25\",\"150\"\n";
+    corrupto.close();
+}
 
 int main() {
     std::cout << "=========================================\n";
-    std::cout << "      Fase 5 - Prueba del Catalogo      \n";
+    std::cout << "     Fase 6 - Prueba del CargadorCSV    \n";
     std::cout << "=========================================\n\n";
 
-    Catalogo catalogo;
-
-    // -- Productos de prueba --
-    Producto p1("Leche Entera", "1000000000001", "Lacteos", "2026-06-01", "Dos Pinos", 12.50, 50);
-    Producto p2("Yogur Natural", "1000000000002", "Lacteos", "2026-05-15", "Dos Pinos", 18.50, 30);
-    Producto p3("Arroz Blanco", "1000000000003", "Granos", "2027-01-01", "Gallo", 8.75, 200);
-    Producto p4("Frijoles Negros", "1000000000004", "Granos", "2027-03-20", "Ducal", 6.25, 150);
-    Producto p5("Cafe Molido", "1000000000005", "Bebidas", "2027-06-01", "Cafe Britt", 22.00, 60);
-    Producto p6("Pan de Molde", "1000000000006", "Panaderia", "2026-03-10", "Bimbo", 15.00, 80);
+    crearArchivosEdge();
 
     // =============================================
-    // PRUEBA 1: Inserción correcta en las 5 estructuras
+    // CASO 1: Archivo inexistente
     // =============================================
-    std::cout << "--- Insertando 6 productos validos ---\n";
-    std::cout << "p1: " << (catalogo.agregarProducto(p1) ? "OK" : "Fallo") << "\n";
-    std::cout << "p2: " << (catalogo.agregarProducto(p2) ? "OK" : "Fallo") << "\n";
-    std::cout << "p3: " << (catalogo.agregarProducto(p3) ? "OK" : "Fallo") << "\n";
-    std::cout << "p4: " << (catalogo.agregarProducto(p4) ? "OK" : "Fallo") << "\n";
-    std::cout << "p5: " << (catalogo.agregarProducto(p5) ? "OK" : "Fallo") << "\n";
-    std::cout << "p6: " << (catalogo.agregarProducto(p6) ? "OK" : "Fallo") << "\n";
-    std::cout << "Total: " << catalogo.contarProductos() << " productos\n\n";
+    std::cout << "--- Caso 1: archivo inexistente ---\n";
+    {
+        Catalogo cat;
+        CargadorCSV cargador("data/errors_caso1.log");
+        int n = cargador.cargar("data/no_existe.csv", cat);
+        std::cout << "Productos cargados: " << n << " (esperado: 0)\n\n";
+    }
 
     // =============================================
-    // PRUEBA 2: Rechazar código de barra duplicado
+    // CASO 2: Archivo vacío (solo encabezado)
     // =============================================
-    std::cout << "--- Insertando codigo de barra duplicado ---\n";
-    Producto dup("Leche Descremada", "1000000000001", "Lacteos", "2026-07-01", "Dos Pinos", 11.00, 40);
-    std::cout << "Resultado: " << (catalogo.agregarProducto(dup) ? "OK" : "Rechazado") << "\n";
-    std::cout << "Total sigue siendo: " << catalogo.contarProductos() << "\n\n";
+    std::cout << "--- Caso 2: archivo vacio ---\n";
+    {
+        Catalogo cat;
+        CargadorCSV cargador("data/errors_caso2.log");
+        int n = cargador.cargar("data/vacio.csv", cat);
+        std::cout << "Productos cargados: " << n << " (esperado: 0)\n\n";
+    }
 
     // =============================================
-    // PRUEBA 3: Rollback por nombre duplicado en AVL
+    // CASO 3: Archivo con errores y duplicados
     // =============================================
-    std::cout << "--- Insertando nombre duplicado (rollback AVL) ---\n";
-    Producto dupNombre("Leche Entera", "9999999999999", "Lacteos", "2026-08-01", "Dos Pinos", 13.00, 25);
-    std::cout << "Resultado: " << (catalogo.agregarProducto(dupNombre) ? "OK" : "Rechazado con rollback") << "\n";
-    std::cout << "Total sigue siendo: " << catalogo.contarProductos() << "\n\n";
+    std::cout << "--- Caso 3: archivo con errores y duplicados ---\n";
+    {
+        Catalogo cat;
+        CargadorCSV cargador("data/errors_caso3.log");
+        int n = cargador.cargar("data/corrupto.csv", cat);
+        std::cout << "Productos cargados: " << n << " (esperado: 2)\n";
+        std::cout << "Verificando AVL (debe listar 2 productos A-Z):\n";
+        cat.listarPorNombre();
+        std::cout << "\n";
+    }
 
     // =============================================
-    // PRUEBA 4: Validación de datos inválidos
+    // CASO 4: CSV principal con 1050 productos
     // =============================================
-    std::cout << "--- Insertando datos invalidos ---\n";
-    Producto invalido("Atun", "8888888888888", "Conservas", "2026-01-01", "Sardimar", -5.0, 10);
-    std::cout << "Precio negativo: " << (catalogo.agregarProducto(invalido) ? "OK" : "Rechazado") << "\n\n";
+    std::cout << "--- Caso 4: CSV principal (1050 productos) ---\n";
+    {
+        Catalogo cat;
+        CargadorCSV cargador("data/errors.log");
+        cargador.cargar("data/productos.csv", cat);
+        std::cout << "Total en catalogo: " << cat.contarProductos() << "\n\n";
 
-    // =============================================
-    // PRUEBA 5: Búsquedas usando cada estructura
-    // =============================================
-    std::cout << "--- Busqueda por nombre (AVL) ---\n";
-    Producto *enc = catalogo.buscarPorNombre("Cafe Molido");
-    if (enc) enc->mostrar();
+        // Verificamos que las búsquedas funcionan sobre los datos reales
+        std::cout << "Busqueda por categoria 'Lacteos':\n";
+        cat.buscarPorCategoria("Lacteos");
 
-    std::cout << "\n--- Busqueda por categoria 'Lacteos' (B+) ---\n";
-    catalogo.buscarPorCategoria("Lacteos");
+        std::cout << "\nBusqueda por rango de fecha [2025-01-01 al 2025-12-31]:\n";
+        cat.buscarPorRangoFecha("2025-01-01", "2025-12-31");
+    }
 
-    std::cout << "\n--- Busqueda por rango de fecha (B) ---\n";
-    catalogo.buscarPorRangoFecha("2026-01-01", "2026-12-31");
-
-    // =============================================
-    // PRUEBA 6: Listado por nombre (AVL in-order)
-    // =============================================
-    std::cout << "\n--- Listado por nombre A-Z ---\n";
-    catalogo.listarPorNombre();
-
-    // =============================================
-    // PRUEBA 7: Eliminación propagada
-    // =============================================
-    std::cout << "\n--- Eliminando 'Yogur Natural' de todas las estructuras ---\n";
-    bool elim = catalogo.eliminarProducto("Yogur Natural", "1000000000002",
-                                          "Lacteos", "2026-05-15");
-    std::cout << "Eliminacion: " << (elim ? "OK" : "Fallo") << "\n";
-    std::cout << "Total ahora: " << catalogo.contarProductos() << "\n\n";
-
-    std::cout << "--- Lacteos tras eliminacion ---\n";
-    catalogo.buscarPorCategoria("Lacteos");
-
-    std::cout << "\n--- Listado A-Z tras eliminacion ---\n";
-    catalogo.listarPorNombre();
-
-    // =============================================
-    // PRUEBA 8: Eliminar inexistente
-    // =============================================
-    std::cout << "\n--- Eliminando producto inexistente ---\n";
-    bool elimFail = catalogo.eliminarProducto("Mantequilla", "0000000000000",
-                                              "Lacteos", "2026-01-01");
-    std::cout << "Resultado: " << (elimFail ? "OK" : "No encontrado") << "\n";
-
-    std::cout << "\nFase 5 completada correctamente.\n";
+    std::cout << "\nFase 6 completada correctamente.\n";
     return 0;
 }

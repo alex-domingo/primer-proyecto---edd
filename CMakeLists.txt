@@ -35,4 +35,6 @@ add_executable(proyecto_edd main.cpp ${SOURCES}
         include/ArbolBPlus.h
         src/NodoBPlus.cpp
         src/ArbolBPlus.cpp
+        include/CargadorCSV.h
+        src/CargadorCSV.cpp
 )
