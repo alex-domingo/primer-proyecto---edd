@@ -35,7 +35,7 @@ private:
     ArbolB *arbolB;
     ArbolBPlus *arbolBPlus;
 
-    int totalProductos; // contador central
+    int totalProductos;
 
     // Verifica si ya existe un producto con ese código de barra
     bool existeCodigo(const std::string &codigoBarra) const;
@@ -63,13 +63,20 @@ public:
                              const std::string &fin);
 
     // -- Listados --
-    void listarPorNombre() const; // AVL in-order
-    void listarSimple() const; // lista simple
-    void listarOrdenado() const; // lista ordenada
+    void listarPorNombre() const;
+
+    void listarSimple() const;
+
+    void listarOrdenado() const;
 
     int contarProductos() const;
 
     bool estaVacio() const;
+
+    // -- Acceso a estructuras internas (para el medidor de rendimiento) --
+    ListaSimple *obtenerListaSimple() const { return listaSimple; }
+    ListaOrdenada *obtenerListaOrdenada() const { return listaOrdenada; }
+    ArbolAVL *obtenerArbolAVL() const { return arbolAVL; }
 };
 
 #endif //PROYECTO_EDD_CATALOGO_H
