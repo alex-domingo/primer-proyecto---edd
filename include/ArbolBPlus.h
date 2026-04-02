@@ -86,6 +86,10 @@ public:
     int obtenerTamano() const;
 
     bool estaVacio() const;
+
+    // -- Acceso interno para VisualizadorDot --
+    NodoBPlus *obtenerRaiz() const { return raiz; }
+    NodoBPlus *obtenerPrimeraHoja() const { return primeraHoja; }
 };
 
 #endif //PROYECTO_EDD_ARBOLBPLUS_H

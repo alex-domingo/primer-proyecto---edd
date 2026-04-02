@@ -39,4 +39,6 @@ add_executable(proyecto_edd main.cpp ${SOURCES}
         src/CargadorCSV.cpp
         include/MedidorRendimiento.h
         src/MedidorRendimiento.cpp
+        include/VisualizadorDot.h
+        src/VisualizadorDot.cpp
 )

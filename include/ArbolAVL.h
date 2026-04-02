@@ -7,6 +7,7 @@
 /*
  * ArbolAVL.h
  * -----------
+ * Árbol Binario de Búsqueda auto-balanceado (AVL).
  * Se ordena por nombre del producto.
  *
  * La propiedad clave del AVL es que la diferencia de altura
@@ -83,6 +84,9 @@ public:
     int obtenerTamano() const;
 
     bool estaVacio() const;
+
+    // -- Acceso interno para VisualizadorDot --
+    NodoAVL *obtenerRaiz() const { return raiz; }
 };
 
 #endif //PROYECTO_EDD_ARBOLAVL_H
