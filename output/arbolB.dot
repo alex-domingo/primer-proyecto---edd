@@ -1,0 +1,29 @@
+// Árbol B (t=3) — primeros 20 nodos
+// Convertir: dot -Tpng output/arbolB.dot -o output/arbolB.png
+digraph ArbolB {
+    graph [label="Arbol B  t=3  (primeros 20 nodos)\nClave: fecha de caducidad" fontsize=14 rankdir=TB];
+    node  [fontname="Courier" fontsize=9];
+    edge  [];
+
+    b0 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>2026-06</TD></TR></TABLE>> shape=plaintext];
+    b1 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>2025-12</TD><TD>2026-03</TD></TR></TABLE>> shape=plaintext];
+    b2 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2025-10</TD><TD>2025-11</TD><TD>2025-11</TD></TR></TABLE>> shape=plaintext];
+    b1 -> b2;
+    b3 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2026-01</TD><TD>2026-02</TD></TR></TABLE>> shape=plaintext];
+    b1 -> b3;
+    b4 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2026-03</TD><TD>2026-04</TD><TD>2026-05</TD></TR></TABLE>> shape=plaintext];
+    b1 -> b4;
+    b0 -> b1;
+    b5 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>2027-01</TD><TD>2027-06</TD><TD>2028-03</TD></TR></TABLE>> shape=plaintext];
+    b6 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2026-07</TD><TD>2026-08</TD><TD>2026-10</TD></TR></TABLE>> shape=plaintext];
+    b5 -> b6;
+    b7 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2027-02</TD><TD>2027-04</TD></TR></TABLE>> shape=plaintext];
+    b5 -> b7;
+    b8 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2027-07</TD><TD>2027-09</TD><TD>2027-11</TD></TR></TABLE>> shape=plaintext];
+    b5 -> b8;
+    b9 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>2028-09</TD><TD>2028-12</TD><TD>2029-12</TD></TR></TABLE>> shape=plaintext];
+    b5 -> b9;
+    b0 -> b5;
+
+    leyenda [label="verde=hoja | azul=interno" shape=note style=filled fillcolor=lightyellow];
+}

@@ -77,6 +77,8 @@ public:
     ListaSimple *obtenerListaSimple() const { return listaSimple; }
     ListaOrdenada *obtenerListaOrdenada() const { return listaOrdenada; }
     ArbolAVL *obtenerArbolAVL() const { return arbolAVL; }
+    ArbolB *obtenerArbolB() const { return arbolB; }
+    ArbolBPlus *obtenerArbolBPlus() const { return arbolBPlus; }
 };
 
 #endif //PROYECTO_EDD_CATALOGO_H

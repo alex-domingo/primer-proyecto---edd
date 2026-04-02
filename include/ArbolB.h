@@ -94,6 +94,9 @@ public:
 
     bool estaVacio() const;
 
+    // -- Acceso interno para VisualizadorDot --
+    NodoB *obtenerRaiz() const { return raiz; }
+
 private:
     // Auxiliar para listar en orden (recorre recursivamente)
     void listarRec(NodoB *nodo) const;
