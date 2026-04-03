@@ -7,30 +7,30 @@ digraph ArbolBPlus {
 
     bp0 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>Granos</TD></TR></TABLE>> shape=plaintext];
     bp1 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>Bebidas</TD><TD>Conservas</TD></TR></TABLE>> shape=plaintext];
-    bp1 -> bph1831747287264 [style=dashed];
-    bp1 -> bph1831747300752 [style=dashed];
-    bp1 -> bph1831747420112 [style=dashed];
+    bp1 -> bph2761089710224 [style=dashed];
+    bp1 -> bph2761089723648 [style=dashed];
+    bp1 -> bph2761088729040 [style=dashed];
     bp0 -> bp1;
     bp2 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightblue"><TR><TD>Lacteos</TD><TD>Panaderia</TD></TR></TABLE>> shape=plaintext];
-    bp2 -> bph1831747418016 [style=dashed];
-    bp2 -> bph1831747296208 [style=dashed];
-    bp2 -> bph1831747297840 [style=dashed];
+    bp2 -> bph2761088726736 [style=dashed];
+    bp2 -> bph2761089718992 [style=dashed];
+    bp2 -> bph2761089720752 [style=dashed];
     bp0 -> bp2;
 
     // --- Hojas enlazadas ---
-    bph1831747287264 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Abarrotes</TD><TD>Abarrotes</TD><TD>Bebidas</TD></TR></TABLE>> shape=plaintext];
-    bph1831747300752 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Bebidas</TD><TD>Bebidas</TD><TD>Bebidas</TD><TD>Condimen.</TD><TD>Congelad.</TD></TR></TABLE>> shape=plaintext];
-    bph1831747420112 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Conservas</TD><TD>Conservas</TD><TD>Frutas</TD><TD>Granos</TD></TR></TABLE>> shape=plaintext];
-    bph1831747418016 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Granos</TD><TD>Granos</TD><TD>Higiene</TD></TR></TABLE>> shape=plaintext];
-    bph1831747296208 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Lacteos</TD><TD>Lacteos</TD><TD>Lacteos</TD><TD>Lacteos</TD><TD>Limpieza</TD></TR></TABLE>> shape=plaintext];
-    bph1831747297840 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Panaderia</TD><TD>Snacks</TD><TD>Snacks</TD><TD>Verduras</TD><TD>Verduras</TD></TR></TABLE>> shape=plaintext];
-    bph1831747287264 -> bph1831747300752 [style=bold color=darkgreen label="sig"];
-    bph1831747300752 -> bph1831747420112 [style=bold color=darkgreen label="sig"];
-    bph1831747420112 -> bph1831747418016 [style=bold color=darkgreen label="sig"];
-    bph1831747418016 -> bph1831747296208 [style=bold color=darkgreen label="sig"];
-    bph1831747296208 -> bph1831747297840 [style=bold color=darkgreen label="sig"];
+    bph2761089710224 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Abarrotes</TD><TD>Abarrotes</TD><TD>Bebidas</TD></TR></TABLE>> shape=plaintext];
+    bph2761089723648 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Bebidas</TD><TD>Bebidas</TD><TD>Bebidas</TD><TD>Condimen.</TD><TD>Congelad.</TD></TR></TABLE>> shape=plaintext];
+    bph2761088729040 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Conservas</TD><TD>Conservas</TD><TD>Frutas</TD><TD>Granos</TD></TR></TABLE>> shape=plaintext];
+    bph2761088726736 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Granos</TD><TD>Granos</TD><TD>Higiene</TD></TR></TABLE>> shape=plaintext];
+    bph2761089718992 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Lacteos</TD><TD>Lacteos</TD><TD>Lacteos</TD><TD>Lacteos</TD><TD>Limpieza</TD></TR></TABLE>> shape=plaintext];
+    bph2761089720752 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="palegreen"><TR><TD>Panaderia</TD><TD>Snacks</TD><TD>Snacks</TD><TD>Verduras</TD><TD>Verduras</TD></TR></TABLE>> shape=plaintext];
+    bph2761089710224 -> bph2761089723648 [style=bold color=darkgreen label="sig"];
+    bph2761089723648 -> bph2761088729040 [style=bold color=darkgreen label="sig"];
+    bph2761088729040 -> bph2761088726736 [style=bold color=darkgreen label="sig"];
+    bph2761088726736 -> bph2761089718992 [style=bold color=darkgreen label="sig"];
+    bph2761089718992 -> bph2761089720752 [style=bold color=darkgreen label="sig"];
 
-    { rank=same; bph1831747287264; bph1831747300752; bph1831747420112; bph1831747418016; bph1831747296208; bph1831747297840; }
+    { rank=same; bph2761089710224; bph2761089723648; bph2761088729040; bph2761088726736; bph2761089718992; bph2761089720752; }
 
     leyenda [label="azul=nodo interno\nverde=hoja\nbold green=enlace siguiente" shape=note style=filled fillcolor=lightyellow];
 }
