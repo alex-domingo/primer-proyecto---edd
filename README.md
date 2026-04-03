@@ -42,6 +42,20 @@ make run
 make clean
 ```
 
+> **`make` no reconocido en Windows (PowerShell):**  
+> MinGW instala el ejecutable como `mingw32-make.exe` en lugar de `make.exe`, por eso PowerShell no lo reconoce. El fix es permanente y solo se hace una vez:
+>
+> 1. Abre el Explorador de archivos y navega a `C:\MinGW\bin\` (o la carpeta donde instalaste MinGW).
+> 2. Busca el archivo `mingw32-make.exe`.
+> 3. Haz una **copia** de ese archivo en la misma carpeta.
+> 4. Renombra la copia a `make.exe`.
+> 5. Abre una nueva terminal y verifica con:
+>     ```
+>    make --version
+>    ```
+>    Deberías ver algo como `GNU Make 3.82.90 Built for i686-pc-mingw32`.  
+>    Desde ese momento `make`, `make run` y `make clean` funcionan normalmente.
+
 ---
 
 ## Uso del sistema
